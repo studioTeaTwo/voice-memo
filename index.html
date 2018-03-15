@@ -1,0 +1,47 @@
+<textarea class="output" rows=10 cols=80></textarea>
+<button class="toggle-button" onclick="toggleStartStop()"></button>
+
+<script type="text/javascript">
+  'use strict';
+  var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+  var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+
+  let recognizing;
+  const diagnostic = document.querySelector('.output');
+  const toggleButton = document.querySelector('.toggle-button');
+
+  var recognition = new SpeechRecognition();
+  console.log('initial', recognition);
+  recognition.lang = 'ja';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  reset();
+  recognition.onend = reset;
+
+  recognition.onresult = event => {
+    console.log('reading...', event.results);
+    const last = event.results.length - 1;
+    diagnostic.value = event.results[last][0].transcript;
+  }
+
+  function reset() {
+    'use strict';
+    recognizing = false;
+    toggleButton.innerHTML = 'Click to Speak';
+  }
+
+  function toggleStartStop() {
+    'use strict';
+    if (recognizing) {
+      recognition.stop();
+      reset();
+    } else {
+      recognition.start();
+      console.log('start');
+      recognizing = true;
+      diagnostic.value = '';
+      toggleButton.innerHTML = 'Click to Stop';
+    }
+  }
+</script>
